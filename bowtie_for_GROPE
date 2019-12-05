@@ -11,3 +11,4 @@
 bowtie2 -p 12 -x [genome file] -1 [fastq pair1] -2 [fastq pair2] -X 2000 --no-mixed --no-discordant | 
 samtools sort -o [seed]_hg19_BT2_sorted.bam -@ 8 -m 1G -
 
+exit;
