@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# This is to demonstrate how I aligned ATAC-seq paired-end reads
+
+bowtie2 -p 12 -x [index] -1 [fastq pair1] -2 [fastq pair2] -X 2000 --no-mixed --no-discordant --trim3 3 | 
+samtools view -bS -f 2 -q 20 -o [out seed]_BT2tr38f2q20.bam -
+
+exit;
+
