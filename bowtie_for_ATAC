@@ -5,7 +5,9 @@
 module load bowtie2/2.1.0 samtools/0.1.19
 
 bowtie2 -p 12 -x [index] -1 [fastq pair1] -2 [fastq pair2] -X 2000 --no-mixed --no-discordant --trim3 3 | 
-samtools view -bS -f 2 -q 20 -o [out seed]_BT2tr38f2q20.bam -
+samtools view -bS -f 2 -q 20 -o unsorted.bam -
+
+samtools sort -@ 8 -m 1000000000 unsorted.bam sorted
 
 exit;
 
