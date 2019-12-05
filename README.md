@@ -15,6 +15,12 @@ Takes bam and runs Tao's Macs2. Produces peakcalls (bed's) and fold-enrichment f
 ### Step 1: runTophat2_v2.sh
 Takes fastq and produces bam.
 
+### Step 2: makePerGeneSymbolTranscriptBed.sh
+Takes ucsc table browser output and produces a file for one transcript per gene symbol. This file is often useful for chromatin-centric analyses of RNA.
+
+### Step 3: computeRPKM_directional_v2.sh
+Takes bam and transcript info and produces rpkm and base count.
+
 
 
 
