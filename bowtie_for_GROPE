@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# This is to demonstrate how I run bowite on paired-end GRO-seq data. 
+
+# [kikegami@cri16in001 test_room]$ which bowtie2
+# /apps/software/gcc-6.2.0/bowtie2/2.1.0/bin/bowtie2
+# [kikegami@cri16in001 test_room]$ which samtools
+# /apps/software/gcc-6.2.0/samtools/0.1.19/bin/samtools
+
+
+bowtie2 -p 12 -x [genome file] -1 [fastq pair1] -2 [fastq pair2] -X 2000 --no-mixed --no-discordant | 
+samtools sort -o [seed]_hg19_BT2_sorted.bam -@ 8 -m 1G -
+
