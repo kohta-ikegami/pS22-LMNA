@@ -2,7 +2,7 @@
 # I think this follows what Tao described in his github.
 
 
-# 1) Make replicate-combined PM100 bedgraph (for backgroun)
+# 1) Make replicate-combined PM100 bedgraph (for signal)
 
 samtools merge -u - [rep1_sorted.bam] [rep2_sorted.bam] | 
 atacbamToCutdens.sh - ~/hg19k1sort 38 100 1 [cutdensPM100.bg]
@@ -37,4 +37,54 @@ awk '{OFS="\t"; print $1, $2, $3, $4+$5}' |
 awk 'BEGIN{gb=[genome background]} {if($4*0.02 > gb){printf "%s\t%s\t%s\t%.1f\n", $1, $2, $3, $4*0.02} else {printf "%s\t%s\t%s\t%.1f\n", $1, $2, $3, gb} }' |
 mergebg.sh - > [local_lambda.bg]
 
+# 4) Generate p-value bedgraph
+
+module load MACS2/2.1.0
+macs2 bdgcmp -t [cutdensPM100.bg] -c [local_lambda.bg] -m ppois -o [cutdensPM100_vs_lambda_pv.bg]
+
+# 5) Call peak
+module load MACS2/2.1.0
+macs2 bdgpeakcall -i [cutdensPM100_vs_lambda_pv.bg] -g 50 --no-trackline --ofile [peak.narrowPeak]
+
+### These output files do not contain p-values. Will get those later.
+
+# 6) Generate FE bedgraph file (over lambda)
+
+bedtools unionbedg -i [cutdensPM100.bg] [local_lambda.bg] | 
+awk '{printf "%s\t%s\t%s\t%.3f\n", $1,$2,$3,$4/$5}' | 
+mergebg.sh - > temp.unclipfebg
+	
+bedClip temp.unclipfebg [genome file] [cutdensPM100_fe.bg]
+
+bedGraphToBigWig ATAC_BJ5ta_t540t542_cutdensPM100_fe.bg ~/hg19BAMsort ATAC_BJ5ta_t540t542_cutdensPM100_fe.bw
+
+### mergebg.sh is deposited.
+### bedClip and bedGraphToBigWig are from Kent's UCSC tools 343.
+
+
+# 6) For each peak, get p-value and fe
+
+## 6.1) Get chromosome order
+chromcheck.sh [cutdensPM100_vs_lambda_pv.bg] 10 > [chrom order of pv.bg]
+
+## 6.2) Reorder genome file by [chrom order of pv.bg]
+orderbed.sh [genome file] [chrom order of pv.bg] --no_error > chrom.temp
+
+## 6.3) get p-value
+orderbed.sh [peaks.narrowPeak] [chrom order of pv.bg] | 
+bedtools map -a stdin -b [cutdensPM100_vs_lambda_pv.bg] -c 4 -o max -sorted -g chrom.temp | 
+sort -k1,1 -k2,2n > [peaks_pv.narrowPeak]
+
+# 7) For each peak, get fe
+
+## 7.1) Get chromosome order
+chromcheck.sh [cutdensPM100_fe.bg] 10 > [chrom order of fe.bg]
+
+## 7.2) Reorder genome file by [chrom order of fe.bg]
+orderbed.sh [genome file] [chrom order of fe.bg] --no_error > chrom.temp
+
+## 7.3) get fe
+orderbed.sh [peaks.narrowPeak] [chrom order of fe.bg] | 
+bedtools map -a stdin -b [cutdensPM100_fe.bg] -c 4 -o max -sorted -g chrom.temp | 
+sort -k1,1 -k2,2n > [peaks_fe.narrowPeak]
 
