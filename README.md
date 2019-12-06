@@ -132,34 +132,34 @@ colData <- data.frame(
 	row.names= my.subset %>% dplyr::select(-transcript.id) %>% names
 )
 
-> colData
-      cell.type study.type
-s75      Normal      aging
-s76      Normal      aging
-s77      Normal      aging
-s79      Normal      aging
-s80      Normal      aging
-s81      Normal      aging
-s82      Normal      aging
-s83      Normal      aging
-s84      Normal      aging
-s42        HGPS      aging
-s43        HGPS      aging
-s44        HGPS      aging
-s45        HGPS      aging
-s46        HGPS      aging
-s47        HGPS      aging
-s48        HGPS      aging
-s49        HGPS      aging
-s50        HGPS      aging
-s51        HGPS      aging
-KI430    Normal         ki
-KI433    Normal         ki
-KI434    Normal         ki
-KI431      HGPS         ki
-KI432      HGPS         ki
-KI435      HGPS         ki
-KI436      HGPS         ki
+# > colData
+#       cell.type study.type
+# s75      Normal      aging
+# s76      Normal      aging
+# s77      Normal      aging
+# s79      Normal      aging
+# s80      Normal      aging
+# s81      Normal      aging
+# s82      Normal      aging
+# s83      Normal      aging
+# s84      Normal      aging
+# s42        HGPS      aging
+# s43        HGPS      aging
+# s44        HGPS      aging
+# s45        HGPS      aging
+# s46        HGPS      aging
+# s47        HGPS      aging
+# s48        HGPS      aging
+# s49        HGPS      aging
+# s50        HGPS      aging
+# s51        HGPS      aging
+# KI430    Normal         ki
+# KI433    Normal         ki
+# KI434    Normal         ki
+# KI431      HGPS         ki
+# KI432      HGPS         ki
+# KI435      HGPS         ki
+# KI436      HGPS         ki
 
 # 3) Data formatting
 rna.norm.hgps.de <- DESeqDataSetFromMatrix(
@@ -174,19 +174,18 @@ rna.norm.hgps.de <- DESeqDataSetFromMatrix(
 # 4) DESeq run
 rna.norm.hgps.de <- DESeq(rna.norm.hgps.de)
 
+# out of 22966 with nonzero total read count
+# adjusted p-value < 0.05
+# LFC > 0 (up)     : 1521, 6.6% 
+# LFC < 0 (down)   : 1418, 6.2% 
+# outliers [1]     : 1961, 8.5% 
+# low counts [2]   : 7341, 32% 
+# (mean count < 326)
+# [1] see 'cooksCutoff' argument of ?results
+# [2] see 'independentFiltering' argument of ?results
+
 # 5) Norm vs HGPS
 rna.norm.hgps.de05 <- extract.deseq(rna.norm.hgps.de, "rna.norm.hgps.de05", 0.05, "cell.type", "HGPS", "Normal")
-
-out of 22966 with nonzero total read count
-adjusted p-value < 0.05
-LFC > 0 (up)     : 1521, 6.6% 
-LFC < 0 (down)   : 1418, 6.2% 
-outliers [1]     : 1961, 8.5% 
-low counts [2]   : 7341, 32% 
-(mean count < 326)
-[1] see 'cooksCutoff' argument of ?results
-[2] see 'independentFiltering' argument of ?results
-
 
 ########################################################
 # extract.deseq
