@@ -27,9 +27,3 @@ fi
 		}
 		END {OFS="\t"; print chr, start, stop, score;}' $bed
 exit;
-		
-###########################################
-# Copyright (c) 2017, Kohta Ikegami
-# All rights reserved.
-# contact: ikgmk@uchicago.edu
-###########################################	
