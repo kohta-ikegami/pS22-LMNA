@@ -20,9 +20,3 @@ res=$2
 sed -n '0~'$res'p' $infile | cut -f1 | uniq
 
 exit
-
-###########################################
-# Copyright (c) 2017, Kohta Ikegami
-# All rights reserved.
-# contact: ikgmk@uchicago.edu
-###########################################	
