@@ -57,8 +57,3 @@ fi
 	
 exit
 	
-###########################################
-# Copyright (c) 2016, Kohta Ikegami
-# All rights reserved.
-# contact: ikgmk@uchicago.edu
-###########################################	
