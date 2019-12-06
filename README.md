@@ -1,4 +1,4 @@
-# pS22-LMNA
+# Project: "pS22-LMNA"
 
 This repository includes codes that Ikegami et al. used in the analysis presented in the paper.
 
@@ -20,6 +20,25 @@ Takes ucsc table browser output and produces a file for one transcript per gene 
 
 ### Step 3: computeRPKM_directional_v2.sh
 Takes bam and transcript info and produces rpkm and base count.
+
+## GRO-seq
+
+### Step 1: bowtie_for_GROPE
+Takes fastq and produces bam.
+
+### Step 2: Bruseq_pipeline_v1.1_PE.sh
+Takes bam and transcript info and produces normalized coverage per transcript and signal tracks for each strand.
+
+## ATAC-seq
+
+### Step 1: bowtie_for_ATAC
+Takes fastq and produces bam. Uses first 38 nt.
+
+### Step 2: atacbamToCutdens.sh
+Takes sorted bam and returns Tn5 cutdensity profile for each replicate.
+
+### Step 3: ATAC_peakcall
+This decribes how to generate fold-enrichment bedgraph and call peaks. 
 
 
 
