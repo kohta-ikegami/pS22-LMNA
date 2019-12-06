@@ -1,0 +1,40 @@
+# This is to demonstrate how I call ATAC peaks
+# I think this follows what Tao described in his github.
+
+
+# 1) Make replicate-combined PM100 bedgraph (for backgroun)
+
+samtools merge -u - [rep1_sorted.bam] [rep2_sorted.bam] | 
+atacbamToCutdens.sh - ~/hg19k1sort 38 100 1 [cutdensPM100.bg]
+
+
+# 2) Make replicate-combined PM5000 bedgraph (for background)
+
+samtools merge -u - [rep1_sorted.bam] [rep2_sorted.bam] | 
+atacbamToCutdens.sh - ~/hg19k1sort 38 5000 1 [cutdensPM5K.bg]
+
+# 3) Make lambda file
+
+## 3.1) Get number of reads (not pairs) used in cutdens
+
+samtools view [rep1_sorted.bam] | 
+awk '$6 == "38M"' | wc -l > [rep1_readnum.txt]
+
+samtools view [rep2_sorted.bam] | 
+awk '$6 == "38M"' | wc -l > [rep2_readnum.txt]
+
+## 3.2) Genome background (read #) x (fragment length 200 bp)/genome size
+
+[genome background (numeric)] = ([rep1_readnum] + [rep2_readnum]) * 200/[genome size]
+
+## 3.3) Construct local_lambda from cutdensPM5K data
+## First, fill non-mapped regions with 0 (using unionbedg with chromosome file)
+## Second, multiply the score by 0.02 (PM100/PM5K) if the score is greater than [genome background], else replace with [genome background].
+
+awk '{OFS="\t"; print $1, 0, $2, 0}' [genome file] | 
+bedtools unionbedg -i stdin [cutdensPM5K.bg] |
+awk '{OFS="\t"; print $1, $2, $3, $4+$5}' |
+awk 'BEGIN{gb=[genome background]} {if($4*0.02 > gb){printf "%s\t%s\t%s\t%.1f\n", $1, $2, $3, $4*0.02} else {printf "%s\t%s\t%s\t%.1f\n", $1, $2, $3, gb} }' |
+mergebg.sh - > [local_lambda.bg]
+
+
